@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { StreamingTextResponse, streamText } from 'ai';
+import { StreamingTextResponse, streamText, StreamData } from 'ai';
 
 export async function POST(req: Request) {
     const { messages } = await req.json();
@@ -9,5 +9,14 @@ export async function POST(req: Request) {
         messages
     });
 
-    return new StreamingTextResponse(result.toAIStream());
+    const data = new StreamData();
+    data.append({ test: 'value'});
+
+    const stream = result.toAIStream({
+        onFinal(_) {
+            data.close();
+        },
+    });
+
+    return new StreamingTextResponse(stream, {}, data);
 }
