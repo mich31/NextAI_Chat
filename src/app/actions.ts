@@ -10,6 +10,7 @@ export async function continueConversation(messages: CoreMessage[]) {
         messages
     });
 
+    const data = { test: 'hello' }
     const stream = createStreamableValue(result.textStream);
-    return stream.value;
+    return { message: stream.value, data };
 }
