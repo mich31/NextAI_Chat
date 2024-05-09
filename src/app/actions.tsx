@@ -43,7 +43,11 @@ export async function getWeather() {
     weatherUI.update(<div style={{ color: 'gray' }}>Loading...</div>);
 
     setTimeout(() => {
-        weatherUI.done(<div>It&lsquo;s a sunny day!</div>);
+        try {
+            weatherUI.done(<div>It&lsquo;s a sunny day!</div>);
+        } catch (e: any) {
+            weatherUI.error(<div>Error: {e.message}</div>);
+        }
     }, 3000);
 
     return weatherUI.value;
