@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     data.append({ test: 'value'});
 
     const stream = result.toAIStream({
-        onFinal(_) {
+        onFinal(completion) {
             data.close();
         },
     });
