@@ -57,10 +57,14 @@ export async function runThread() {
     const streamableStatus = createStreamableValue('thread.init');
   
     setTimeout(() => {
-        streamableStatus.update('thread.run.create');
-        streamableStatus.update('thread.run.update');
-        streamableStatus.update('thread.run.end');
-        streamableStatus.done('thread.end');
+        try {
+            streamableStatus.update('thread.run.create');
+            streamableStatus.update('thread.run.update');
+            streamableStatus.update('thread.run.end');
+            streamableStatus.done('thread.end');
+        } catch (e: any) {
+            return { error: e.message };
+        }
     }, 1000);
   
     return { status: streamableStatus.value };
