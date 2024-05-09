@@ -4,14 +4,16 @@ import { useActions, useUIState } from 'ai/rsc';
 
 export default function Page() {
     const { sendMessage } = useActions();
-    const [messages, setMessages] = useUIState();
+    const [messages, setMessages] = useUIState([]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         const message =  event.target.message.value;
     
-        setMessages([ ...messages, { id: Date.now(), role: 'user', display: message } ]);
+        // setMessages([ ...messages, { id: Date.now(), role: 'user', display: message } ]);
+        messages.push({ id: Date.now(), role: 'user', display: message })
+        setMessages(messages);
     
         const response = await sendMessage(message);
         setMessages([ ...messages, { id: Date.now(), role: 'assistant', display: response } ]);
