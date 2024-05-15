@@ -22,7 +22,7 @@ export default function Message( {content, role} : {content: string, role: 'user
             </Avatar.Root>
             <div className={
                 clsx(
-                    'rounded-full mx-4 px-6 py-3 max-w-[75%]',
+                    'rounded-xl antialiased text-sm mx-4 px-6 py-3 max-w-[75%]',
                     {
                         'bg-gray-100': role === 'ai',
                         'text-black': role === 'ai',
