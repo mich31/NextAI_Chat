@@ -1,39 +1,14 @@
-'use client';
-
-import { useChat } from 'ai/react';
-
-export default function Page() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, reload } = useChat({
-    api: 'api/chat/v2',
-  });
-
-  const handleDelete = (id: string) => {
-    setMessages(messages.filter(message => message.id !== id))
-  }
-
-  return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {messages.map(message => (
-        <div key={message.id}>
-          {message.role === 'user' ? 'User: ' : 'AI: '}
-          {message.content + '  '}
-          <button onClick={() => handleDelete(message.id)}>Delete</button>
+export default function Page(){
+    return (
+        <div className='flex flex-row'>
+            <div className='min-h-screen basis-1/4 bg-blue-300 p-2'>Conversations</div>
+            <div className='flex min-h-screen basis-3/4 flex-col bg-white'>
+                <div className='mx-auto w-9/12 basis-11/12 bg-slate-100 px-2 py-2'>Response</div>
+                <div className='mx-auto w-9/12 basis-1/12'>
+                    <input type='text' className='min-w-full rounded-lg border-2 border-blue-300 px-2 py-2' placeholder='Message' />
+                </div>
+            </div>
         </div>
-      ))}
-      {isLoading ? <div>AI: ...</div> : ''}
-      <form onSubmit={handleSubmit}>
-        <input 
-            name="prompt"
-            className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-            value={input}
-            onChange={handleInputChange}
-            id="input"
-        />
-        <button className="fixed bottom-0 mb-10 ml-80 border rounded bg-slate-500" type="submit">Submit</button>
-        <button className="fixed bottom-0 mb-10 ml-96 border rounded bg-slate-500" onClick={reload} disabled={isLoading}>
-          Regenerate
-        </button>
-      </form>
-    </div>
-  );
+
+    );
 }
