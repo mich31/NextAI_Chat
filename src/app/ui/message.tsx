@@ -1,7 +1,7 @@
 import * as Avatar from '@radix-ui/react-avatar';
 import clsx from 'clsx';
 export default function Message( {content, role} : {content: string, role: 'user' | 'ai'}) {
-    const avatar = role === 'ai' ? 'https://github.com/shadcn.png' : ''
+    const avatar = role === 'ai' ? 'https://github.com/shadcn.png' : '';
     return (
         <div 
             className={clsx(
