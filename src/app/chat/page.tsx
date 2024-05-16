@@ -30,9 +30,11 @@ export default function Page() {
             id="input"
         />
         <button className="fixed bottom-0 mb-10 ml-80 border rounded bg-slate-500" type="submit">Submit</button>
-        <button className="fixed bottom-0 mb-10 ml-96 border rounded bg-slate-500" onClick={reload} disabled={isLoading}>
-          Regenerate
-        </button>
+        {/** 
+         * <button className="fixed bottom-0 mb-10 ml-96 border rounded bg-slate-500" onClick={reload} disabled={isLoading}>
+            Regenerate
+          </button>
+        */}
       </form>
     </div>
   );
