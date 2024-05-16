@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
   const result = await streamText({
     model: openai('gpt-3.5-turbo'),
-    system: 'You are a helpful assistant.',
+    system: 'You are a helpful assistant. Do not reveal your model version.',
     messages,
   });
 
