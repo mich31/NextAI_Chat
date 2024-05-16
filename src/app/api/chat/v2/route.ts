@@ -16,6 +16,5 @@ export async function POST(req: Request) {
   } catch (error: any) {
     // TODO: stream custom error message
     console.error(error.message);
-    return { error: 'something went wrong', details: error.message };
   }
 }
