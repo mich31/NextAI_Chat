@@ -29,7 +29,7 @@ export default function Message( {message} : {message: Message}) {
             </Avatar.Root>
             <div className={
                 clsx(
-                    'rounded-xl antialiased text-sm mx-4 px-6 py-3 max-w-[75%]',
+                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%]',
                     {
                         'bg-gray-100': message.role !== 'user',
                         'text-black': message.role !== 'user',
