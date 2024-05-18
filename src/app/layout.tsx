@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton, SignIn } from '@clerk/nextjs';
 import { AI } from './actions';
 import './globals.css';
 
@@ -17,11 +18,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AI>
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
-      </html>
-      <Analytics />
-    </AI>
+    <ClerkProvider>
+      <AI>
+        <html lang="en">
+          <body className={inter.className}>
+            <header className='flex justify-between bg-blue-300'>
+              <h1>Next AI chat</h1>
+              <UserButton showName/>
+            </header>
+            <main>
+              <SignedOut>
+                <div className='flex justify-center py-24'><SignIn routing='hash'/></div>
+              </SignedOut>
+              <SignedIn>
+                {children}
+              </SignedIn>
+            </main>
+          </body>
+        </html>
+        <Analytics />
+      </AI>
+    </ClerkProvider>
   );
 }

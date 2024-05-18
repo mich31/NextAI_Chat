@@ -4,11 +4,14 @@ import { type CoreMessage } from 'ai';
 import { useState } from 'react';
 import { continueConversation } from './actions';
 import { readStreamableValue } from 'ai/rsc';
+import { redirect } from 'next/navigation';
 
 export default function Chat() {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [input, setInput] = useState('');
   const [data, setData] = useState<any>()
+  redirect('/chatbot');
+  /*
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
@@ -51,5 +54,5 @@ export default function Chat() {
         />
       </form>
     </div>
-  )
+  ) */
 }
