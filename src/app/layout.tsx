@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton, SignIn } from '@clerk/nextjs';
 import { AI } from './actions';
 import './globals.css';
+import clsx from 'clsx';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,12 +22,12 @@ export default function RootLayout({
     <ClerkProvider>
       <AI>
         <html lang="en">
-          <body className={inter.className}>
-            <header className='flex justify-between bg-blue-300'>
-              <h1>Next AI chat</h1>
+          <body className={clsx(inter.className, 'h-screen')}>
+            <header className='flex justify-between bg-slate-200 w-full px-4 h-16'>
+              <h1 className='flex items-center'>Next AI chat</h1>
               <UserButton showName/>
             </header>
-            <main>
+            <main className='h-full'>
               <SignedOut>
                 <div className='flex justify-center py-24'><SignIn routing='hash'/></div>
               </SignedOut>
