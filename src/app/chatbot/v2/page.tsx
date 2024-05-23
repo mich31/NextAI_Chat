@@ -14,7 +14,7 @@ export default function Page() {
     
     return (
         <div className='flex flex-row h-full'>
-            <div className='basis-[23%] bg-slate-200 p-4'>Conversations</div>
+            <div className='basis-[23%] bg-blue-100 p-4'>Conversations</div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12  pt-4 h-full'>
                     {messages.map((m) => (<Message message={m} key={m.id}/>))}
@@ -44,7 +44,8 @@ export default function Page() {
                                         <div className='absolute right-0 top-3 sm:right-4'>
                                             <button
                                                 type='submit'
-                                                className='px-2 py-2 basis-1/12 bg-blue-300 rounded-xl w-12 hover:opacity-90 shadow-2xl'
+                                                className='px-2 py-2 basis-1/12 bg-blue-500 rounded-xl w-12 hover:opacity-90 shadow-2xl disabled:pointer-events-none  disabled:bg-blue-200'
+                                                disabled={input.trim() === ''}
                                             >
                                                 <PaperPlaneIcon className='w-6 h-6 mx-auto text-white'/>
                                             </button>
