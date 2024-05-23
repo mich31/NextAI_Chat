@@ -18,7 +18,7 @@ export default function Message( {message} : {message: Message}) {
                 }
             )}
         >
-            <Avatar.Root className='h-12 w-12 select-none items-center justify-center overflow-hidden rounded-full align-middle'>
+            <Avatar.Root className='h-8 w-8 my-1 select-none items-center justify-center overflow-hidden rounded-full align-middle'>
                 <Avatar.Image className='h-full w-full rounded-[inherit] object-cover' src={avatar} />
                 <Avatar.Fallback 
                     className='text-white leading-1 flex h-full w-full items-center justify-center bg-blue-300 text-[15px] font-medium'
