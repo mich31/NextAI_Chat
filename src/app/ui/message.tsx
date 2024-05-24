@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { CopyIcon } from '@radix-ui/react-icons';
 
-export default function ChatMessage( {message, isLoading} : {message: Message, isLoading: boolean}) {
+export default function ChatMessage( {message, isLoading} : {message: Message, isLoading?: boolean}) {
     const [url, setUrl] = useState<URL>();
     const isUser: boolean = message.role === 'user';
     const avatar = isUser ? '' : 'https://github.com/shadcn.png';
