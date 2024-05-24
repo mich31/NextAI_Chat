@@ -39,7 +39,7 @@ export default function Page() {
             </div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12 pt-4 h-full'>
-                    {messages.map((m) => (<ChatMessage key={m.id} message={m} isLoading={isLoading}/>))}
+                    {messages.map((m) => (<ChatMessage key={m.id} message={m} isLoading={isLoading} reload={reload}/>))}
                     <div className='h-[160px]'></div>
                 </div>
                 <div className='relative'>

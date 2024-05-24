@@ -1,15 +1,18 @@
-import * as Avatar from '@radix-ui/react-avatar';
+import { useState } from 'react';
+import Link from 'next/link';
+import { ChatRequestOptions } from 'ai';
 import { Message } from 'ai/react';
 import clsx from 'clsx';
+import * as Avatar from '@radix-ui/react-avatar';
+import { CopyIcon, UpdateIcon } from '@radix-ui/react-icons';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { MemoizedReactMarkdown } from './markdown';
-import Link from 'next/link';
-import { useState } from 'react';
-import { CopyIcon } from '@radix-ui/react-icons';
 import { CodeBlock } from './codeblock';
 
-export default function ChatMessage( {message, isLoading} : {message: Message, isLoading?: boolean}) {
+export default function ChatMessage( 
+        {message, isLoading, reload} : {message: Message, isLoading?: boolean, reload?: (chatRequestOptions?: ChatRequestOptions) => Promise<string | null | undefined>}
+    ) {
     const [url, setUrl] = useState<URL>();
     const isUser: boolean = message.role === 'user';
     const avatar = isUser ? '' : 'https://github.com/shadcn.png';
@@ -87,11 +90,18 @@ export default function ChatMessage( {message, isLoading} : {message: Message, i
             </div>
             {
                 !isUser && !isLoading ?
-                    <div className='ml-16'>
-                        <button className='bg-transparent'>
-                            <CopyIcon onClick={handleCopyToClipboard} className='w-4 h-4 mx-auto text-gray-500'/>
-                        </button>
-                    </div> : ''
+                    <div className='flex flex-row space-x-3'>
+                        <div className='ml-16 w-6 h-6 p-1 hover:bg-gray-100 rounded'>
+                            <button className='bg-transparent'>
+                                <CopyIcon onClick={handleCopyToClipboard} className='w-4 h-4 mx-auto text-gray-500'/>
+                            </button>
+                        </div>
+                        <div className='w-6 h-6 p-1 hover:bg-gray-100 rounded'>
+                            <button className='bg-transparent'>
+                                <UpdateIcon onClick={(e) => {reload && reload()}} className='w-4 h-4 text-gray-500'/>
+                            </button>
+                        </div>
+                    </div>  : ''
             }
         </div>
     );
