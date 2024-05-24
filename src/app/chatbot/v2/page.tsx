@@ -4,20 +4,41 @@ import { useState } from 'react';
 import { Textarea } from '@/app/ui/textarea';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { useChat } from 'ai/react';
-import Message from '@/app/ui/message';
+import ChatMessage from '@/app/ui/message';
 
 export default function Page() {
     const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
     // const [inputValue, setInputValue] = useState('');
+    const history = [
+        { id: '1', title: 'Fine-Tuning LLM Benefits'},
+        { id: '2', title: 'Go package installation with Bazel'},
+        { id: '3', title: 'Product Engineer description'},
+        { id: '4', title: 'Retrieve Paypal Customer Details'},
+        { id: '5', title: 'Translation App'},
+    ];
     
     return (
         <div className='flex flex-row h-full'>
-            <div className='basis-[23%] bg-blue-100 p-4'>Conversations</div>
+            <div className='flex flex-col basis-[23%] bg-blue-100 p-4 space-y-4'>
+                <div className='antialiased text-center text-sm font-medium'>
+                    <button className='w-full h-10 hover:rounded-lg hover:bg-blue-200' onClick={e => console.log('click')}>New conversation</button>
+                </div>
+                <div className='h-full space-y-2'>
+                    <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
+                    {history.map((c) => (
+                        <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-normal'>
+                            <button className='w-full h-10 truncate hover:rounded-lg hover:bg-blue-200' onClick={e => console.log('click')}>
+                                {c.title}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12  pt-4 h-full'>
-                    {messages.map((m) => (<Message message={m} key={m.id}/>))}
+                    {messages.map((m) => (<ChatMessage message={m} key={m.id}/>))}
                     <div className='h-[160px]'></div>
                 </div>
                 <div className='relative'>
