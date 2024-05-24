@@ -4,11 +4,13 @@ import { Textarea } from '@/app/ui/textarea';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { useChat } from 'ai/react';
 import ChatMessage from '@/app/ui/message';
+import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 
 export default function Page() {
     const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
+    const { formRef, onKeyDown } = useEnterSubmit();
 
     const history = [
         { id: '1', title: 'Fine-Tuning LLM Benefits'},
@@ -44,12 +46,12 @@ export default function Page() {
                     <div className='fixed bottom-0 left-0 right-0 h-[132px]'>
                         <div className='mx-auto max-w-2xl h-full border-t shadow-xl rounded-t-xl bg-white' style={{ marginLeft: '33%' }}>
                             <div className='px-4 py-4'>
-                                <form onSubmit={handleSubmit}>
+                                <form ref={formRef} onSubmit={handleSubmit}>
                                     <div className='relative flex flex-row pr-20 border rounded-md'>
                                         <Textarea
                                             // ref={inputRef}
                                             tabIndex={0}
-                                            // onKeyDown={onKeyDown}
+                                            onKeyDown={onKeyDown}
                                             placeholder='Type a message..'
                                             className='min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm'
                                             autoFocus
