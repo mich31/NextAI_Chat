@@ -1,8 +1,14 @@
 import * as Avatar from '@radix-ui/react-avatar';
 import { Message } from 'ai/react';
 import clsx from 'clsx';
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import { MemoizedReactMarkdown } from './markdown';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export default function ChatMessage( {message} : {message: Message}) {
+    const [url, setUrl] = useState<URL>();
     const avatar = message.role === 'user' ? '' : 'https://github.com/shadcn.png';
     return (
         <div 
@@ -24,7 +30,7 @@ export default function ChatMessage( {message} : {message: Message}) {
             </Avatar.Root>
             <div className={
                 clsx(
-                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%] whitespace-pre-line',
+                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%]',
                     {
                         'bg-gray-100': message.role !== 'user',
                         'text-black': message.role !== 'user',
@@ -33,7 +39,23 @@ export default function ChatMessage( {message} : {message: Message}) {
                     }
                 )
             }>
-                {message.content}
+                <MemoizedReactMarkdown 
+                    className='prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0'
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    components={{
+                        a({children}) {
+                            const urlValue = children?.toString();
+                            if(urlValue?.startsWith('http') || urlValue?.startsWith('www')){
+                                setUrl(new URL(urlValue));
+                            }
+                            return <Link href={url || '#'} target='_blank' className='text-blue-600 hover:underline active:text-blue-700 visited:text-blue-800'>
+                                        {children}
+                                    </Link>
+                        }
+                    }}
+                >
+                    {message.content}
+                </MemoizedReactMarkdown>
             </div>
         </div>
     );

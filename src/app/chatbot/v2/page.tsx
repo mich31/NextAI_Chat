@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Textarea } from '@/app/ui/textarea';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { useChat } from 'ai/react';
@@ -10,7 +9,7 @@ export default function Page() {
     const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
-    // const [inputValue, setInputValue] = useState('');
+
     const history = [
         { id: '1', title: 'Fine-Tuning LLM Benefits'},
         { id: '2', title: 'Go package installation with Bazel'},
@@ -65,7 +64,7 @@ export default function Page() {
                                         <div className='absolute right-0 top-3 sm:right-4'>
                                             <button
                                                 type='submit'
-                                                className='px-2 py-2 basis-1/12 bg-blue-500 rounded-xl w-12 hover:opacity-90 shadow-2xl disabled:pointer-events-none  disabled:bg-blue-200'
+                                                className='px-2 py-2 basis-1/12 bg-blue-500 rounded-xl w-12 hover:opacity-90 shadow-2xl disabled:cursor-not-allowed disabled:bg-blue-200'
                                                 disabled={input.trim() === ''}
                                             >
                                                 <PaperPlaneIcon className='w-6 h-6 mx-auto text-white'/>
