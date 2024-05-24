@@ -1,17 +1,27 @@
 import * as Avatar from '@radix-ui/react-avatar';
 import { Message } from 'ai/react';
 import clsx from 'clsx';
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import { MemoizedReactMarkdown } from './markdown';
 import Link from 'next/link';
 import { useState } from 'react';
 import { CopyIcon } from '@radix-ui/react-icons';
+import { CodeBlock } from './codeblock';
 
 export default function ChatMessage( {message, isLoading} : {message: Message, isLoading?: boolean}) {
     const [url, setUrl] = useState<URL>();
     const isUser: boolean = message.role === 'user';
     const avatar = isUser ? '' : 'https://github.com/shadcn.png';
+
+    const handleCopyToClipboard = async () => {
+        try {
+          await navigator.clipboard.writeText(message.content);
+        } catch (error) {
+          console.error('Failed to copy text to clipboard:', error);
+        }
+    };
+
     return (
         <div>
             <div 
@@ -54,7 +64,21 @@ export default function ChatMessage( {message, isLoading} : {message: Message, i
                                 return <Link href={url || '#'} target='_blank' className='text-blue-600 hover:underline active:text-blue-700 visited:text-blue-800'>
                                             {children}
                                         </Link>
-                            }
+                            },
+                            code({ node, className, children, ...props }) {
+                                const match = /language-(\w+)/.exec(className || '');
+                                if (match) {
+                                    return (
+                                        <CodeBlock
+                                          key={Math.random()}
+                                          language={(match && match[1]) || ''}
+                                          value={String(children).replace(/\n$/, '')}
+                                          {...props}
+                                        />
+                                    );
+                                }
+                                return (<code className={clsx('bg-red-200 text-red-900 rounded-md border-2 border-red-700 px-1' ,className)} {...props}>{children}</code>);
+                            },
                         }}
                     >
                         {message.content}
@@ -65,7 +89,7 @@ export default function ChatMessage( {message, isLoading} : {message: Message, i
                 !isUser && !isLoading ?
                     <div className='ml-16'>
                         <button className='bg-transparent'>
-                            <CopyIcon className='w-4 h-4 mx-auto text-gray-500'/>
+                            <CopyIcon onClick={handleCopyToClipboard} className='w-4 h-4 mx-auto text-gray-500'/>
                         </button>
                     </div> : ''
             }
