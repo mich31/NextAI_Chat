@@ -1,13 +1,8 @@
 import * as Avatar from '@radix-ui/react-avatar';
+import { Message } from 'ai/react';
 import clsx from 'clsx';
 
-type Message = {
-    id: string,
-    content: string,
-    role: 'function' | 'user' | 'system' | 'assistant' | 'data' | 'tool',
-};
-
-export default function Message( {message} : {message: Message}) {
+export default function ChatMessage( {message} : {message: Message}) {
     const avatar = message.role === 'user' ? '' : 'https://github.com/shadcn.png';
     return (
         <div 
@@ -29,7 +24,7 @@ export default function Message( {message} : {message: Message}) {
             </Avatar.Root>
             <div className={
                 clsx(
-                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%]',
+                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%] whitespace-pre-line',
                     {
                         'bg-gray-100': message.role !== 'user',
                         'text-black': message.role !== 'user',
