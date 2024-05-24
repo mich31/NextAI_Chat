@@ -1,13 +1,8 @@
 import * as Avatar from '@radix-ui/react-avatar';
+import { Message } from 'ai/react';
 import clsx from 'clsx';
 
-type Message = {
-    id: string,
-    content: string,
-    role: 'function' | 'user' | 'system' | 'assistant' | 'data' | 'tool',
-};
-
-export default function Message( {message} : {message: Message}) {
+export default function ChatMessage( {message} : {message: Message}) {
     const avatar = message.role === 'user' ? '' : 'https://github.com/shadcn.png';
     return (
         <div 
@@ -18,7 +13,7 @@ export default function Message( {message} : {message: Message}) {
                 }
             )}
         >
-            <Avatar.Root className='h-12 w-12 select-none items-center justify-center overflow-hidden rounded-full align-middle'>
+            <Avatar.Root className='h-8 w-8 my-1 select-none items-center justify-center overflow-hidden rounded-full align-middle'>
                 <Avatar.Image className='h-full w-full rounded-[inherit] object-cover' src={avatar} />
                 <Avatar.Fallback 
                     className='text-white leading-1 flex h-full w-full items-center justify-center bg-blue-300 text-[15px] font-medium'
@@ -29,7 +24,7 @@ export default function Message( {message} : {message: Message}) {
             </Avatar.Root>
             <div className={
                 clsx(
-                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%]',
+                    'rounded-xl antialiased text-sm mx-4 px-4 py-3 max-w-[75%] whitespace-pre-line',
                     {
                         'bg-gray-100': message.role !== 'user',
                         'text-black': message.role !== 'user',
