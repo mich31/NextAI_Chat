@@ -6,6 +6,7 @@ async function main() {
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
             email TEXT NOT NULL,
+            title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT now(),
             updated_at TIMESTAMP DEFAULT now()
