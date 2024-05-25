@@ -5,12 +5,28 @@ import { PaperPlaneIcon, StopIcon } from '@radix-ui/react-icons';
 import { useChat } from 'ai/react';
 import ChatMessage from '@/app/ui/message';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
+import { useActions } from 'ai/rsc';
+import { useState } from 'react';
 
 export default function Page() {
-    const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
+    const { messages, isLoading, stop, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
+    const { sendMessage } = useActions();
+    const [inputValue, setInputValue] = useState('');
     const { formRef, onKeyDown } = useEnterSubmit();
+
+    const handleSubmit = async (event: any) => {
+        event.preventDefault();
+        const message =  event.target.message.value;
+    
+        setInputValue('');
+        messages.push({ id: Date.now().toString(), role: 'user', content: message })
+        setMessages(messages);
+    
+        const response = await sendMessage(message);
+        setMessages([ ...messages, { id: Date.now().toString(), role: 'assistant', content: response } ]);
+    };
 
     const history = [
         { id: '1', title: 'Fine-Tuning LLM Benefits'},
@@ -59,15 +75,15 @@ export default function Page() {
                                             autoCorrect='off'
                                             name='message'
                                             rows={1}
-                                            value={input}
-                                            onChange={handleInputChange}
+                                            value={inputValue}
+                                            onChange={e => setInputValue(e.target.value)}
                                             disabled={isLoading}
                                         />
                                         <div className='absolute right-0 top-3 sm:right-4'>
                                             <button
                                                 type='submit'
                                                 className='px-2 py-2 basis-1/12 bg-blue-500 rounded-xl w-12 hover:opacity-90 shadow-2xl disabled:cursor-not-allowed disabled:bg-blue-200'
-                                                disabled={input.trim() === '' && !isLoading}
+                                                disabled={inputValue.trim() === '' && !isLoading}
                                             >
                                                 {
                                                     isLoading ? 
