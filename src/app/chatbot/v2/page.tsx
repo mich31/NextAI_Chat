@@ -12,7 +12,7 @@ export default function Page() {
     const { messages, isLoading, stop, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
-    const { sendMessage } = useActions();
+    const { sendMessage, saveConversation } = useActions();
     const [inputValue, setInputValue] = useState('');
     const { formRef, onKeyDown } = useEnterSubmit();
 
@@ -26,6 +26,7 @@ export default function Page() {
     
         const response = await sendMessage(message);
         setMessages([ ...messages, { id: Date.now().toString(), role: 'assistant', content: response } ]);
+        await saveConversation(messages);
     };
 
     const history = [
@@ -76,7 +77,7 @@ export default function Page() {
                                             name='message'
                                             rows={1}
                                             value={inputValue}
-                                            onChange={e => setInputValue(e.target.value)}
+                                            onChange={e => { e.preventDefault(); setInputValue(e.target.value);}}
                                             disabled={isLoading}
                                         />
                                         <div className='absolute right-0 top-3 sm:right-4'>

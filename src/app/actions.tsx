@@ -4,6 +4,8 @@ import { createStreamableValue, createStreamableUI, createAI, getMutableAIState 
 import { CoreMessage, generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { ReactNode } from 'react';
+import { Message } from 'ai/react';
+import { sql } from '@vercel/postgres';
 
 // Define the AI state and UI state types
 export type AIState = Array<{
@@ -23,6 +25,7 @@ export const AI = createAI({
     initialUIState: [] as UIState,
     actions: {
         sendMessage,
+        saveConversation,
     },
 });
 
@@ -87,4 +90,21 @@ export async function sendMessage(message: string) {
     history.done([...history.get(), { role: 'assistant', content: response.text }]);
 
     return response.text;
+}
+
+export async function saveConversation(messages: Message[]) {
+    try {
+        const history = getMutableAIState();
+        const response = await generateText({
+            model: openai('gpt-3.5-turbo'),
+            messages: [...history.get(), { role: 'user', content: 'Give a concise title to this discussion' }],
+        });
+        const title = response.text;
+        await sql`
+            INSERT INTO conversations (username, email, title, content)
+            VALUES ('mich', 'michelaxel1@gmail.com', ${title}, ${JSON.stringify(messages)});
+        `;
+    } catch (error) {
+        console.error('Failed to save conversation:', error);
+    }
 }
