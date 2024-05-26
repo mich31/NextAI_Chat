@@ -52,7 +52,7 @@ export default function Page() {
                 <div className='h-full space-y-2'>
                     <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
                     {history.map((c) => (
-                        <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-normal'>
+                        <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-medium'>
                             <button className='w-full h-10 truncate hover:rounded-lg hover:bg-blue-200' onClick={e => console.log('click')}>
                                 {c.title}
                             </button>
