@@ -31,6 +31,10 @@ export default function Page() {
         await saveConversation(user, messages);
     };
 
+    const handleNewConversation = async () => {
+        setMessages([]);
+    }
+
     const history = [
         { id: '1', title: 'Fine-Tuning LLM Benefits'},
         { id: '2', title: 'Go package installation with Bazel'},
@@ -43,7 +47,7 @@ export default function Page() {
         <div className='flex flex-row h-full'>
             <div className='flex flex-col basis-[23%] bg-blue-100 p-4 space-y-4'>
                 <div className='antialiased text-center text-sm font-medium'>
-                    <button className='w-full h-10 hover:rounded-lg hover:bg-blue-200' onClick={e => console.log('click')}>New conversation</button>
+                    <button className='w-full h-10 hover:rounded-lg hover:bg-blue-200' onClick={handleNewConversation}>New conversation</button>
                 </div>
                 <div className='h-full space-y-2'>
                     <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
