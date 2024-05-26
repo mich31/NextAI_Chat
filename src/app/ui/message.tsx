@@ -9,13 +9,15 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { MemoizedReactMarkdown } from './markdown';
 import { CodeBlock } from './codeblock';
+import { User } from '@/lib/hooks/use-user-profile';
 
 export default function ChatMessage( 
-        {message, isLoading, reload} : {message: Message, isLoading?: boolean, reload?: (chatRequestOptions?: ChatRequestOptions) => Promise<string | null | undefined>}
+        {message, user, isLoading, reload} : 
+        {message: Message, user: User, isLoading?: boolean, reload?: (chatRequestOptions?: ChatRequestOptions) => Promise<string | null | undefined>}
     ) {
     const [url, setUrl] = useState<URL>();
     const isUser: boolean = message.role === 'user';
-    const avatar = isUser ? '' : 'https://github.com/shadcn.png';
+    const avatar = isUser ? user.imageUrl : 'https://github.com/shadcn.png';
 
     const handleCopyToClipboard = async () => {
         try {

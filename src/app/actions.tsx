@@ -6,6 +6,7 @@ import { openai } from '@ai-sdk/openai';
 import { ReactNode } from 'react';
 import { Message } from 'ai/react';
 import { sql } from '@vercel/postgres';
+import { User } from '@/lib/hooks/use-user-profile';
 
 // Define the AI state and UI state types
 export type AIState = Array<{
@@ -92,17 +93,17 @@ export async function sendMessage(message: string) {
     return response.text;
 }
 
-export async function saveConversation(messages: Message[]) {
+export async function saveConversation(user: User, messages: Message[]) {
     try {
         const history = getMutableAIState();
         const response = await generateText({
             model: openai('gpt-3.5-turbo'),
-            messages: [...history.get(), { role: 'user', content: 'Give a concise title to this discussion' }],
+            messages: [...history.get(), { role: 'user', content: 'Give a title summarizing our current discussion' }],
         });
         const title = response.text;
         await sql`
             INSERT INTO conversations (username, email, title, content)
-            VALUES ('mich', 'michelaxel1@gmail.com', ${title}, ${JSON.stringify(messages)});
+            VALUES (${user.userName}, ${user.emailAddress}, ${title}, ${JSON.stringify(messages)});
         `;
     } catch (error) {
         console.error('Failed to save conversation:', error);

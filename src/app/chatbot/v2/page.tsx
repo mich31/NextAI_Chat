@@ -7,6 +7,7 @@ import ChatMessage from '@/app/ui/message';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { useActions } from 'ai/rsc';
 import { useState } from 'react';
+import { useUserProfile } from '@/lib/hooks/use-user-profile';
 
 export default function Page() {
     const { messages, isLoading, stop, setMessages, reload } = useChat({
@@ -15,6 +16,7 @@ export default function Page() {
     const { sendMessage, saveConversation } = useActions();
     const [inputValue, setInputValue] = useState('');
     const { formRef, onKeyDown } = useEnterSubmit();
+    const { user } = useUserProfile();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -26,7 +28,7 @@ export default function Page() {
     
         const response = await sendMessage(message);
         setMessages([ ...messages, { id: Date.now().toString(), role: 'assistant', content: response } ]);
-        await saveConversation(messages);
+        await saveConversation(user, messages);
     };
 
     const history = [
@@ -56,7 +58,7 @@ export default function Page() {
             </div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12 pt-4 h-full'>
-                    {messages.map((m) => (<ChatMessage key={m.id} message={m} isLoading={isLoading} reload={reload}/>))}
+                    {messages.map((m) => (<ChatMessage key={m.id} message={m} user={user} isLoading={isLoading} reload={reload}/>))}
                     <div className='h-[160px]'></div>
                 </div>
                 <div className='relative'>

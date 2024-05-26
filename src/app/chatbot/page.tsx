@@ -3,18 +3,20 @@
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import ChatMessage from '../ui/message';
 import { useChat } from 'ai/react';
+import { useUserProfile } from '@/lib/hooks/use-user-profile';
 
 export default function Page(){
     const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, reload } = useChat({
         api: 'api/chat/v2',
     });
+    const { user } = useUserProfile();
 
     return (
         <div className='flex flex-row'>
             <div className='h-screen basis-1/4 bg-blue-300 p-2'>Conversations</div>
             <div className='flex h-screen basis-3/4 overflow-hidden flex-col bg-white'>
                 <div className='mx-auto overflow-y-auto w-10/12 h-[90%] bg-white px-2 py-2 rounded-xl mt-8 shadow-xl'>
-                    {messages.map((m) => (<ChatMessage message={m} key={m.id}/>))}
+                    {messages.map((m) => (<ChatMessage key={m.id} message={m} user={user}/>))}
                 </div>
                 <form onSubmit={handleSubmit} className='flex mx-auto w-10/12 py-4 space-x-4'>
                     <input
