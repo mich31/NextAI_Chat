@@ -93,6 +93,9 @@ export async function sendMessage(message: string) {
 }
 
 export async function saveConversation(userInfo: User & {conversationId: string, action: 'create' | 'update'}, messages: CoreMessage[]) {
+    if(!userInfo) return;
+
+    const currentUtcTime = (new Date()).toUTCString();
     try {
         if(userInfo.action === 'create') {
             console.log(`Creating conversation (id: ${userInfo.conversationId})..`);
@@ -102,13 +105,16 @@ export async function saveConversation(userInfo: User & {conversationId: string,
             });
             const title = response.text;
             await sql`
-                INSERT INTO conversations (id, username, email, title, content)
-                VALUES (${userInfo.conversationId}, ${userInfo.userName}, ${userInfo.emailAddress}, ${title}, ${JSON.stringify(messages)});
+                INSERT INTO conversations (id, username, email, title, content, created_at, updated_at)
+                VALUES (${userInfo.conversationId}, ${userInfo.userName}, ${userInfo.emailAddress}, ${title}, ${JSON.stringify(messages)}, ${currentUtcTime}, ${currentUtcTime});
             `;
             console.log(`Conversation (id: ${userInfo.conversationId}) created`);
         } else {
             console.log(`Updating conversation (id: ${userInfo.conversationId})..`);
-            await sql` UPDATE SET content = ${JSON.stringify(messages)} WHERE id = ${userInfo.conversationId}; `;
+            await sql` 
+                UPDATE conversations SET content = ${JSON.stringify(messages)}, updated_at = ${currentUtcTime}
+                WHERE id = ${userInfo.conversationId};
+            `;
             console.log(`Conversation (id: ${userInfo.conversationId}) updated`);
         }
     } catch (error) {
