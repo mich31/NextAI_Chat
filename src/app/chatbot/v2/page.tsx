@@ -5,34 +5,38 @@ import { PaperPlaneIcon, StopIcon } from '@radix-ui/react-icons';
 import { useChat } from 'ai/react';
 import ChatMessage from '@/app/ui/message';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
-import { useActions } from 'ai/rsc';
-import { useState } from 'react';
 import { useUserProfile } from '@/lib/hooks/use-user-profile';
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Page() {
-    const { messages, isLoading, stop, setMessages, reload } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
-    const { sendMessage, saveConversation } = useActions();
-    const [inputValue, setInputValue] = useState('');
     const { formRef, onKeyDown } = useEnterSubmit();
     const { user } = useUserProfile();
+    const [conversationId, setConversationId] = useState<string>('');
 
-    const handleSubmit = async (event: any) => {
-        event.preventDefault();
-        const message =  event.target.message.value;
-    
-        setInputValue('');
-        messages.push({ id: Date.now().toString(), role: 'user', content: message })
-        setMessages(messages);
-    
-        const response = await sendMessage(message);
-        setMessages([ ...messages, { id: Date.now().toString(), role: 'assistant', content: response } ]);
-        await saveConversation(user, messages);
-    };
+    const handleInputSubmit = async (event: any) => {
+        const isNewConversation = (conversationId === '');
+        let currentConversationId = isNewConversation ? uuidv4() : conversationId; 
+        const userInfo: Record<string, string> = {
+            conversationId: currentConversationId,
+            action: isNewConversation ? 'create' : 'update',
+            userName: user?.userName || '',
+            emailAddress: user?.emailAddress || '',
+        };
+
+        handleSubmit(event, { data: userInfo });
+
+        if(isNewConversation) {
+            setConversationId(currentConversationId);
+        }
+    }
 
     const handleNewConversation = async () => {
         setMessages([]);
+        setConversationId('');
     }
 
     const history = [
@@ -69,7 +73,7 @@ export default function Page() {
                     <div className='fixed bottom-0 left-0 right-0 h-[132px]'>
                         <div className='mx-auto max-w-2xl h-full border-t shadow-xl rounded-t-xl bg-white' style={{ marginLeft: '33%' }}>
                             <div className='px-4 py-4'>
-                                <form ref={formRef} onSubmit={handleSubmit}>
+                                <form ref={formRef} onSubmit={handleInputSubmit}>
                                     <div className='relative flex flex-row pr-20 border rounded-md'>
                                         <Textarea
                                             tabIndex={0}
@@ -82,15 +86,15 @@ export default function Page() {
                                             autoCorrect='off'
                                             name='message'
                                             rows={1}
-                                            value={inputValue}
-                                            onChange={e => { e.preventDefault(); setInputValue(e.target.value);}}
+                                            value={input}
+                                            onChange={handleInputChange}
                                             disabled={isLoading}
                                         />
                                         <div className='absolute right-0 top-3 sm:right-4'>
                                             <button
                                                 type='submit'
                                                 className='px-2 py-2 basis-1/12 bg-blue-500 rounded-xl w-12 hover:opacity-90 shadow-2xl disabled:cursor-not-allowed disabled:bg-blue-200'
-                                                disabled={inputValue.trim() === '' && !isLoading}
+                                                disabled={input.trim() === '' && !isLoading}
                                             >
                                                 {
                                                     isLoading ? 

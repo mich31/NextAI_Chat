@@ -4,7 +4,6 @@ import { createStreamableValue, createStreamableUI, createAI, getMutableAIState 
 import { CoreMessage, generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { ReactNode } from 'react';
-import { Message } from 'ai/react';
 import { sql } from '@vercel/postgres';
 import { User } from '@/lib/hooks/use-user-profile';
 
@@ -93,18 +92,25 @@ export async function sendMessage(message: string) {
     return response.text;
 }
 
-export async function saveConversation(user: User, messages: Message[]) {
+export async function saveConversation(userInfo: User & {conversationId: string, action: 'create' | 'update'}, messages: CoreMessage[]) {
     try {
-        const history = getMutableAIState();
-        const response = await generateText({
-            model: openai('gpt-3.5-turbo'),
-            messages: [...history.get(), { role: 'user', content: 'Give a title summarizing our current discussion' }],
-        });
-        const title = response.text;
-        await sql`
-            INSERT INTO conversations (username, email, title, content)
-            VALUES (${user.userName}, ${user.emailAddress}, ${title}, ${JSON.stringify(messages)});
-        `;
+        if(userInfo.action === 'create') {
+            console.log(`Creating conversation (id: ${userInfo.conversationId})..`);
+            const response = await generateText({
+                model: openai('gpt-3.5-turbo'),
+                messages: [...messages, { role: 'user', content: 'Give a title summarizing our current discussion' }],
+            });
+            const title = response.text;
+            await sql`
+                INSERT INTO conversations (id, username, email, title, content)
+                VALUES (${userInfo.conversationId}, ${userInfo.userName}, ${userInfo.emailAddress}, ${title}, ${JSON.stringify(messages)});
+            `;
+            console.log(`Conversation (id: ${userInfo.conversationId}) created`);
+        } else {
+            console.log(`Updating conversation (id: ${userInfo.conversationId})..`);
+            await sql` UPDATE SET content = ${JSON.stringify(messages)} WHERE id = ${userInfo.conversationId}; `;
+            console.log(`Conversation (id: ${userInfo.conversationId}) updated`);
+        }
     } catch (error) {
         console.error('Failed to save conversation:', error);
     }
