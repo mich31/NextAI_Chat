@@ -8,9 +8,13 @@ import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { User } from '@/lib/hooks/use-user-profile';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { getConversation, History } from '../actions';
+import { getConversation } from '../actions';
+import clsx from 'clsx';
 
-export default function Conversation({user, history}: {user: User, history: History}) {
+export default function Conversation(
+    {user, conversationList}: 
+    {user: User, conversationList: Array<{id: string, title: string, updated_at: Date, active: boolean}>}
+) {
     const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
         api: '../api/chat/v2',
     });
@@ -59,9 +63,15 @@ export default function Conversation({user, history}: {user: User, history: Hist
                 </div>
                 <div className='h-full space-y-2'>
                     <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
-                    {history.conversations.map((c) => (
+                    {conversationList.map((c) => (
                         <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-medium'>
-                            <button className='w-full h-10 truncate hover:rounded-lg hover:bg-blue-200' onClick={async e => await handleSelectConversation(e, c.id)}>
+                            <button 
+                                className={clsx(
+                                    'w-full h-10 truncate hover:rounded-lg hover:bg-blue-200',
+                                    (conversationId === c.id) ? 'rounded-lg bg-blue-200 ': ''
+                                )}
+                                onClick={async e => await handleSelectConversation(e, c.id)}
+                            >
                                 {c.title}
                             </button>
                         </div>
