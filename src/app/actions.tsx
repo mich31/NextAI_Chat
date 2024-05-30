@@ -19,6 +19,11 @@ export type UIState = Array<{
     display: ReactNode;
 }>;
 
+export type History = {
+    count: number;
+    conversations: Array<any>;
+};
+
 // Create the AI provider with the initial states and allowed actions
 export const AI = createAI({
     initialAIState: [] as AIState,
@@ -92,6 +97,20 @@ export async function sendMessage(message: string) {
     return response.text;
 }
 
+export async function getConversationList(user: User): Promise<History> {
+    try {
+        console.log(`Fetching conversation list for ${user.emailAddress}`);
+        const {rowCount, rows} = await sql`
+            SELECT id, title, updated_at FROM conversations WHERE email = ${user.emailAddress} ORDER BY updated_at DESC;
+        `;
+        console.log(`${rowCount} conversation(s) found for ${user.emailAddress}`);
+        return { count: rowCount, conversations: rows };
+    } catch (error) {
+        console.error(`Failed to fetch conversation list for user ${user.emailAddress}: ${error}`);
+        return { count: 0, conversations: []};
+    }
+}
+
 export async function saveConversation(userInfo: User & {conversationId: string, action: 'create' | 'update'}, messages: CoreMessage[]) {
     if(!userInfo) return;
 
@@ -103,7 +122,7 @@ export async function saveConversation(userInfo: User & {conversationId: string,
                 model: openai('gpt-3.5-turbo'),
                 messages: [...messages, { role: 'user', content: 'Give a title summarizing our current discussion' }],
             });
-            const title = response.text;
+            const title = response.text.replace(/^"|"$/g, '');
             await sql`
                 INSERT INTO conversations (id, username, email, title, content, created_at, updated_at)
                 VALUES (${userInfo.conversationId}, ${userInfo.userName}, ${userInfo.emailAddress}, ${title}, ${JSON.stringify(messages)}, ${currentUtcTime}, ${currentUtcTime});
