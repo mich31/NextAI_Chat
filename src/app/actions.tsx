@@ -99,7 +99,7 @@ export async function sendMessage(message: string) {
 
 export async function getConversationList(user: User): Promise<History> {
     try {
-        console.log(`Fetching conversation list for ${user.emailAddress}`);
+        console.log(`Fetching conversation list for user ${user.emailAddress}`);
         const {rowCount, rows} = await sql`
             SELECT id, title, updated_at FROM conversations WHERE email = ${user.emailAddress} ORDER BY updated_at DESC;
         `;
@@ -108,6 +108,23 @@ export async function getConversationList(user: User): Promise<History> {
     } catch (error) {
         console.error(`Failed to fetch conversation list for user ${user.emailAddress}: ${error}`);
         return { count: 0, conversations: []};
+    }
+}
+
+export async function getConversation(id: string, user: User) {
+    try {
+        console.log(`Fetching conversation for user ${user.emailAddress}`);
+        const {rowCount, rows} = await sql`
+            SELECT * FROM conversations WHERE id = ${id} AND email = ${user.emailAddress};
+        `;
+        if(rowCount !==  1) {
+            throw new Error(`No conversation found for user ${user.emailAddress} (id: ${id})`);
+        }
+        console.log(`${rowCount} conversation found for ${user.emailAddress}`);
+        return rows[0];
+    } catch (error) {
+        console.error(`Failed to fetch conversation for user ${user.emailAddress}: ${error}`);
+        throw error;
     }
 }
 

@@ -8,7 +8,7 @@ import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { User } from '@/lib/hooks/use-user-profile';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { History } from '../actions';
+import { getConversation, History } from '../actions';
 
 export default function Conversation({user, history}: {user: User, history: History}) {
     const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
@@ -39,14 +39,17 @@ export default function Conversation({user, history}: {user: User, history: Hist
         setConversationId('');
     }
 
-    /*
-    const history = [
-        { id: '1', title: 'Fine-Tuning LLM Benefits'},
-        { id: '2', title: 'Go package installation with Bazel'},
-        { id: '3', title: 'Product Engineer description'},
-        { id: '4', title: 'Retrieve Paypal Customer Details'},
-        { id: '5', title: 'Translation App'},
-    ];*/
+    const handleSelectConversation = async (event: any, id: string) => {
+        event.preventDefault();
+        try {
+            const conversation = await getConversation(id, user);
+            const content = JSON.parse(conversation.content);
+            setMessages(content);
+            setConversationId(conversation.id);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className='flex flex-row h-full'>
@@ -58,7 +61,7 @@ export default function Conversation({user, history}: {user: User, history: Hist
                     <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
                     {history.conversations.map((c) => (
                         <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-medium'>
-                            <button className='w-full h-10 truncate hover:rounded-lg hover:bg-blue-200' onClick={e => console.log('click')}>
+                            <button className='w-full h-10 truncate hover:rounded-lg hover:bg-blue-200' onClick={async e => await handleSelectConversation(e, c.id)}>
                                 {c.title}
                             </button>
                         </div>
@@ -67,7 +70,7 @@ export default function Conversation({user, history}: {user: User, history: Hist
             </div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12 pt-4 h-full'>
-                    {messages.map((m) => (<ChatMessage key={m.id} message={m} user={user} isLoading={isLoading} reload={reload}/>))}
+                    {messages.map((m, i) => (<ChatMessage key={i} message={m} user={user} isLoading={isLoading} reload={reload}/>))}
                     <div className='h-[160px]'></div>
                 </div>
                 <div className='relative'>
