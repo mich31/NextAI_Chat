@@ -98,11 +98,14 @@ export default function ChatMessage(
                                 <CopyIcon onClick={handleCopyToClipboard} className='w-4 h-4 mx-auto text-gray-500'/>
                             </button>
                         </div>
-                        <div className='w-6 h-6 p-1 hover:bg-gray-100 rounded'>
-                            <button className='bg-transparent'>
-                                <UpdateIcon onClick={(e) => {reload && reload()}} className='w-4 h-4 text-gray-500'/>
-                            </button>
-                        </div>
+                        {
+                            reload ? 
+                            <div className='w-6 h-6 p-1 hover:bg-gray-100 rounded'>
+                                <button className='bg-transparent'>
+                                    <UpdateIcon onClick={(e) => {reload && reload()}} className='w-4 h-4 text-gray-500'/>
+                                </button>
+                            </div> : ''
+                        }
                     </div>  : ''
             }
         </div>

@@ -57,7 +57,7 @@ export default function Conversation(
 
     return (
         <div className='flex flex-row h-full'>
-            <div className='flex flex-col basis-[23%] bg-blue-100 p-4 space-y-4'>
+            <div className='flex flex-col basis-[23%] bg-blue-100 p-4 space-y-4' style={{width: '18rem'}}>
                 <div className='antialiased text-center text-sm font-medium'>
                     <button className='w-full h-10 hover:rounded-lg hover:bg-blue-200' onClick={handleNewConversation}>New conversation</button>
                 </div>
@@ -67,7 +67,7 @@ export default function Conversation(
                         <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-medium'>
                             <button 
                                 className={clsx(
-                                    'w-full h-10 truncate hover:rounded-lg hover:bg-blue-200',
+                                    'w-full h-10 p-1 truncate hover:rounded-lg hover:bg-blue-200',
                                     (conversationId === c.id) ? 'rounded-lg bg-blue-200 ': ''
                                 )}
                                 onClick={async e => await handleSelectConversation(e, c.id)}
@@ -80,7 +80,12 @@ export default function Conversation(
             </div>
             <div className='flex flex-col basis-[77%] overflow-y-auto bg-slate-50'>
                 <div className='mx-auto w-10/12 pt-4 h-full'>
-                    {messages.map((m, i) => (<ChatMessage key={i} message={m} user={user} isLoading={isLoading} reload={reload}/>))}
+                    {messages.map((m, i, msgs) => (
+                            (i === msgs.length-1) ? 
+                                <ChatMessage key={i} message={m} user={user} isLoading={isLoading} reload={reload}/> 
+                                : <ChatMessage key={i} message={m} user={user} isLoading={isLoading}/> 
+                        ))
+                    }
                     <div className='h-[160px]'></div>
                 </div>
                 <div className='relative'>
