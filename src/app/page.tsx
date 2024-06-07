@@ -10,7 +10,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [input, setInput] = useState('');
   const [data, setData] = useState<any>()
-  redirect('/chatbot/v2');
+  redirect('/chatbot');
   /*
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
