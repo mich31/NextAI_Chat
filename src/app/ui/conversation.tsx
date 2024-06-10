@@ -13,7 +13,7 @@ import clsx from 'clsx';
 
 export default function Conversation(
     {user, conversationList}: 
-    {user: User, conversationList: Array<{id: string, title: string, updated_at: Date, active: boolean}>}
+    {user: User, conversationList: Array<{id: string, title: string, updated_at: Date}>}
 ) {
     const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
         api: '../api/chat/v2',
