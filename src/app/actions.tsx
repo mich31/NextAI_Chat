@@ -118,7 +118,8 @@ export async function getConversation(id: string, user: User) {
             SELECT * FROM conversations WHERE id = ${id} AND email = ${user.emailAddress};
         `;
         if(rowCount !==  1) {
-            throw new Error(`No conversation found for user ${user.emailAddress} (id: ${id})`);
+            console.error(`No conversation found for user ${user.emailAddress} (id: ${id})`);
+            return;
         }
         console.log(`${rowCount} conversation found for ${user.emailAddress}`);
         return rows[0];

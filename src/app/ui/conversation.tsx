@@ -6,7 +6,6 @@ import { Message, useChat } from 'ai/react';
 import ChatMessage from '@/app/ui/message';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { User } from '@/lib/hooks/use-user-profile';
-import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -27,7 +26,7 @@ export default function Conversation({ user, content }: { user: User, content: M
 
     const handleInputSubmit = async (event: any) => {
         const isNewConversation = (conversationId === '');
-        let currentConversationId = isNewConversation ? uuidv4() : conversationId; 
+        const currentConversationId = isNewConversation ? uuidv4() : conversationId; 
         const userInfo: Record<string, string> = {
             conversationId: currentConversationId,
             action: isNewConversation ? 'create' : 'update',
