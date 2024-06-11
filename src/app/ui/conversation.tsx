@@ -7,16 +7,23 @@ import ChatMessage from '@/app/ui/message';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { User } from '@/lib/hooks/use-user-profile';
 import { v4 as uuidv4 } from 'uuid';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-export default function Conversation({ user, content }: { user: User, content: Message[]}) {
-    const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, reload } = useChat({
+export default function Conversation({ user, content }: { user: User, content: Message[] }) {
+    const { replace } = useRouter();
+    const { messages, input, handleInputChange, handleSubmit, isLoading, stop, reload } = useChat({
         api: '../api/chat/v2',
+        initialMessages: content,
+        onFinish() {
+            if(conversationId !== String(params.id || '')) {
+                replace(`/chatbot/${conversationId}`);
+            }
+        }
     });
     const { formRef, onKeyDown } = useEnterSubmit();
     const params = useParams();
-    const conversationId = String(params.id || '');
-    setMessages(content);
+    const [conversationId, setConversationId] = useState<string>(String(params.id || ''));
 
     const handleInputSubmit = async (event: any) => {
         const isNewConversation = (conversationId === '');
@@ -29,6 +36,10 @@ export default function Conversation({ user, content }: { user: User, content: M
         };
 
         handleSubmit(event, { data: userInfo });
+
+        if(isNewConversation) {
+            setConversationId(currentConversationId);
+        }
     }
 
     return (

@@ -1,7 +1,6 @@
 import { streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { saveConversation } from '@/app/actions';
-import { redirect } from 'next/navigation';
 
 export async function POST(req: Request) {
   const { messages, data } = await req.json();
@@ -14,7 +13,6 @@ export async function POST(req: Request) {
       async onFinish({ text, toolCalls, toolResults, usage, finishReason }) {
         const history = [...messages, {role: 'assistant', content: text}];
         await saveConversation(data, history);
-        redirect(`/chatbot/${data.conversationId}`);
       },
     });
   
