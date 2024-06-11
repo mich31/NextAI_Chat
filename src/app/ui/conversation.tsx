@@ -8,6 +8,7 @@ import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { User } from '@/lib/hooks/use-user-profile';
 import { v4 as uuidv4 } from 'uuid';
 import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Conversation({ user, content }: { user: User, content: Message[] }) {
     const { replace } = useRouter();

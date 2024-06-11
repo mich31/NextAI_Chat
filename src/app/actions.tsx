@@ -6,6 +6,7 @@ import { openai } from '@ai-sdk/openai';
 import { ReactNode } from 'react';
 import { sql } from '@vercel/postgres';
 import { User } from '@/lib/hooks/use-user-profile';
+import { notFound } from 'next/navigation';
 
 // Define the AI state and UI state types
 export type AIState = Array<{
@@ -119,7 +120,7 @@ export async function getConversation(id: string, user: User) {
         `;
         if(rowCount !==  1) {
             console.error(`No conversation found for user ${user.emailAddress} (id: ${id})`);
-            return;
+            return notFound();
         }
         console.log(`${rowCount} conversation found for ${user.emailAddress}`);
         return rows[0];
