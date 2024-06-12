@@ -23,8 +23,10 @@ export default function RootLayout({
       <AI>
         <html lang="en">
           <body className={clsx(inter.className, 'h-screen')}>
-            <header className='flex justify-between bg-blue-100 border-b-2 border-gray-200 w-full px-4 h-14'>
-              <h1 className='flex items-center'>Next AI chat</h1>
+            <header className='flex justify-between bg-blue-100 border-b-2 border-gray-200 w-full h-16 pr-4'>
+              <div style={{width: '18rem'}}>
+                <a href='/chatbot' className='flex items-center justify-center h-full px-12'>Next AI chat</a>
+              </div>
               <UserButton showName/>
             </header>
             <main className='h-full'>
