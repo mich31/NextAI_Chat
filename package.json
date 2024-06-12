@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.9",
+    "@ai-sdk/provider": "^0.0.10",
+    "@ai-sdk/provider-utils": "^0.0.13",
     "@clerk/nextjs": "^5.0.12",
     "@clerk/types": "^4.5.0",
     "@radix-ui/react-avatar": "^1.0.4",
