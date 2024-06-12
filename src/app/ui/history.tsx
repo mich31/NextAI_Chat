@@ -7,24 +7,22 @@ export default function History(
 ) {
     return (
         <div className='flex flex-col basis-[23%] bg-blue-100 p-4 space-y-4' style={{width: '18rem'}}>
-            <div className='antialiased text-center text-sm font-medium'>
-                <a href='/chatbot' className='w-full h-10 hover:rounded-lg hover:bg-blue-200'>New conversation</a>
-            </div>
-            <div className='h-full space-y-2'>
-                <div className='antialiased text-center text-gray-500 text-sm font-bold'>History</div>
+            <a href='/chatbot' className='antialiased h-8 mx-6 py-1 hover:rounded-lg hover:bg-blue-200 text-center text-gray-800 text-sm font-medium'>
+                New conversation
+            </a>
+            <div className='flex flex-col h-full space-y-1'>
+                <div className='antialiased h-8 text-center text-gray-500 text-sm font-semibold'>History</div>
                 {conversationList.map((c) => (
-                    <div key={c.id} className='antialiased text-center text-gray-700 text-sm font-medium'>
-                        <Link
-                            key={c.id}
-                            href={`/chatbot/${c.id}`}
-                            className={clsx(
-                                'w-full h-10 p-1 truncate hover:rounded-lg hover:bg-blue-200',
-                                (conversationId === c.id) ? 'rounded-lg bg-blue-200 ': ''
-                            )}
-                        >
-                            {c.title}
-                        </Link>
-                    </div>
+                    <Link
+                        key={c.id}
+                        href={`/chatbot/${c.id}`}
+                        className={clsx(
+                            'antialiased text-center text-gray-800 text-sm font-medium w-full h-10 px-2 py-2 truncate hover:rounded-lg hover:bg-blue-200',
+                            (conversationId === c.id) ? 'rounded-lg bg-blue-200 ': ''
+                        )}
+                    >
+                        {c.title}
+                    </Link>
                 ))}
             </div>
         </div>
