@@ -86,6 +86,6 @@ export function createMistral(options: MistralProviderSettings = {}): MistralPro
     Default Mistral provider instance.
 */
 export const mistral = createMistral({
-    baseURL: 'https://gv11hrf2tbhq7m0j.us-east-1.aws.endpoints.huggingface.cloud',
-    apiKey: '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'
+    baseURL: process.env.MISTRAL_BASE_URL,
+    apiKey: process.env.MISTRAL_API_KEY
 });
