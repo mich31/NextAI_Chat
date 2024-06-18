@@ -1,8 +1,8 @@
 import { LanguageModelV1Prompt, UnsupportedFunctionalityError } from '@ai-sdk/provider';
-import { MistralChatPrompt } from './mistral-chat-prompt';
+import { ChatPrompt } from './chat-prompt';
   
-export function convertToMistralChatMessages(prompt: LanguageModelV1Prompt): MistralChatPrompt {
-    const messages: MistralChatPrompt = [];
+export function convertToChatMessages(prompt: LanguageModelV1Prompt): ChatPrompt {
+    const messages: ChatPrompt = [];
   
     for (const { role, content } of prompt) {
         switch (role) {

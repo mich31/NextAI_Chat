@@ -1,21 +1,21 @@
 import { EmbeddingModelV1, TooManyEmbeddingValuesForCallError } from '@ai-sdk/provider';
 import { createJsonResponseHandler, postJsonToApi } from '@ai-sdk/provider-utils';
 import { z } from 'zod';
-import { MistralEmbeddingModelId, MistralEmbeddingSettings } from './mistral-embedding-settings';
-import { mistralFailedResponseHandler } from './mistral-error';
+import { EmbeddingModelId, EmbeddingSettings } from './embedding-settings';
+import { failedResponseHandler } from './provider-error';
   
-type MistralEmbeddingConfig = {
+type EmbeddingConfig = {
     provider: string;
     baseURL: string;
     headers: () => Record<string, string | undefined>;
 };
   
-export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
+export class EmbeddingModel implements EmbeddingModelV1<string> {
     readonly specificationVersion = 'v1';
-    readonly modelId: MistralEmbeddingModelId;
+    readonly modelId: EmbeddingModelId;
   
-    private readonly config: MistralEmbeddingConfig;
-    private readonly settings: MistralEmbeddingSettings;
+    private readonly config: EmbeddingConfig;
+    private readonly settings: EmbeddingSettings;
   
     get provider(): string {
         return this.config.provider;
@@ -31,7 +31,7 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
         return this.settings.supportsParallelCalls ?? false;
     }
   
-    constructor(modelId: MistralEmbeddingModelId, settings: MistralEmbeddingSettings, config: MistralEmbeddingConfig) {
+    constructor(modelId: EmbeddingModelId, settings: EmbeddingSettings, config: EmbeddingConfig) {
         this.modelId = modelId;
         this.settings = settings;
         this.config = config;
@@ -53,8 +53,8 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
             url: `${this.config.baseURL}/embeddings`,
             headers: this.config.headers(),
             body: { model: this.modelId, input: values, encoding_format: 'float' },
-            failedResponseHandler: mistralFailedResponseHandler,
-            successfulResponseHandler: createJsonResponseHandler(MistralTextEmbeddingResponseSchema),
+            failedResponseHandler: failedResponseHandler,
+            successfulResponseHandler: createJsonResponseHandler(TextEmbeddingResponseSchema),
             abortSignal,
         });
   
@@ -65,9 +65,9 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
     }
 }
   
-// minimal version of the schema, focussed on what is needed for the implementation
+// minimal version of the schema, focused on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const MistralTextEmbeddingResponseSchema = z.object({
+const TextEmbeddingResponseSchema = z.object({
     data: z.array(
         z.object({ embedding: z.array(z.number()) }),
     ),

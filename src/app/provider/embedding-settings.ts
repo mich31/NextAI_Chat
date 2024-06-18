@@ -1,6 +1,6 @@
-export type MistralEmbeddingModelId = 'mistral-embed' | (string & {});
+export type EmbeddingModelId = 'mistral-embed' | (string & {}); //  TODO: review default value
 
-export interface MistralEmbeddingSettings {
+export interface EmbeddingSettings {
     /** Override the maximum number of embeddings per call.*/
     maxEmbeddingsPerCall?: number;
 

@@ -7,28 +7,28 @@ import {
 } from '@ai-sdk/provider';
 import { ParseResult, createEventSourceResponseHandler, createJsonResponseHandler, postJsonToApi } from '@ai-sdk/provider-utils';
 import { z } from 'zod';
-import { convertToMistralChatMessages } from './convert-to-mistral-chat-messages';
-import { mapMistralFinishReason } from './map-mistral-finish-reason';
-import { MistralChatModelId, MistralChatSettings } from './mistral-chat-settings';
-import { mistralFailedResponseHandler } from './mistral-error';
+import { convertToChatMessages } from './convert-to-chat-messages';
+import { mapFinishReason } from './map-finish-reason';
+import { ChatModelId, ChatSettings } from './chat-settings';
+import { failedResponseHandler } from './provider-error';
 
-type MistralChatConfig = {
+type ChatConfig = {
     provider: string;
     baseURL: string;
     headers: () => Record<string, string | undefined>;
     generateId: () => string;
 };
 
-export class MistralChatLanguageModel implements LanguageModelV1 {
+export class ChatLanguageModel implements LanguageModelV1 {
     readonly specificationVersion = 'v1';
     readonly defaultObjectGenerationMode = 'json';
 
-    readonly modelId: MistralChatModelId;
-    readonly settings: MistralChatSettings;
+    readonly modelId: ChatModelId;
+    readonly settings: ChatSettings;
 
-    private readonly config: MistralChatConfig;
+    private readonly config: ChatConfig;
 
-    constructor(modelId: MistralChatModelId, settings: MistralChatSettings, config: MistralChatConfig) {
+    constructor(modelId: ChatModelId, settings: ChatSettings, config: ChatConfig) {
         this.modelId = modelId;
         this.settings = settings;
         this.config = config;
@@ -63,7 +63,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
             top_p: topP,
             random_seed: seed,
             // messages:
-            messages: convertToMistralChatMessages(prompt),
+            messages: convertToChatMessages(prompt),
         };
 
         switch (type) {
@@ -90,8 +90,8 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
             url: `${this.config.baseURL}/chat/completions`,
             headers: this.config.headers(),
             body: args,
-            failedResponseHandler: mistralFailedResponseHandler,
-            successfulResponseHandler: createJsonResponseHandler(mistralChatResponseSchema),
+            failedResponseHandler: failedResponseHandler,
+            successfulResponseHandler: createJsonResponseHandler(chatResponseSchema),
             abortSignal: options.abortSignal,
         });
 
@@ -106,7 +106,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
                             toolName: toolCall.function.name,
                             args: toolCall.function.arguments!,
                         })),
-            finishReason: mapMistralFinishReason(choice.finish_reason),
+            finishReason: mapFinishReason(choice.finish_reason),
             usage: {
                 promptTokens: response.usage.prompt_tokens,
                 completionTokens: response.usage.completion_tokens,
@@ -123,8 +123,8 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
             url: `${this.config.baseURL}/chat/completions`,
             headers: this.config.headers(),
             body: {...args, stream: true },
-            failedResponseHandler: mistralFailedResponseHandler,
-            successfulResponseHandler: createEventSourceResponseHandler(mistralChatChunkSchema),
+            failedResponseHandler: failedResponseHandler,
+            successfulResponseHandler: createEventSourceResponseHandler(chatChunkSchema),
             abortSignal: options.abortSignal,
         });
 
@@ -140,7 +140,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
 
         return {
             stream: response.pipeThrough(
-                new TransformStream<ParseResult<z.infer<typeof mistralChatChunkSchema>>, LanguageModelV1StreamPart>({
+                new TransformStream<ParseResult<z.infer<typeof chatChunkSchema>>, LanguageModelV1StreamPart>({
                     transform(chunk, controller) {
                         if (!chunk.success) {
                             controller.enqueue({ type: 'error', error: chunk.error });
@@ -159,7 +159,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
                         const choice = value.choices[0];
 
                         if (choice?.finish_reason != null) {
-                            finishReason = mapMistralFinishReason(choice.finish_reason);
+                            finishReason = mapFinishReason(choice.finish_reason);
                         }
 
                         if (choice?.delta == null) {
@@ -206,9 +206,9 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
     }
 }
 
-// limited version of the schema, focussed on what is needed for the implementation
+// limited version of the schema, focused on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const mistralChatResponseSchema = z.object({
+const chatResponseSchema = z.object({
     choices: z.array(
         z.object({
             message: z.object({
@@ -228,9 +228,9 @@ const mistralChatResponseSchema = z.object({
     usage: z.object({ prompt_tokens: z.number(), completion_tokens: z.number() }),
 });
 
-// limited version of the schema, focussed on what is needed for the implementation
+// limited version of the schema, focused on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const mistralChatChunkSchema = z.object({
+const chatChunkSchema = z.object({
     object: z.literal('chat.completion.chunk'),
     choices: z.array(
         z.object({
